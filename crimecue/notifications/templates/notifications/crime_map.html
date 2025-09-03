@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Crime Map</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #crime-list div { 
+            padding: 8px; 
+            border-bottom: 1px solid #ddd; 
+        }
+    </style>
+</head>
+<body>
+    <h1>Live Crime Reports</h1>
+    <div id="crime-list"></div>
+    
+    <!-- Link the JS -->
+    <script src="{% static 'js/crime_ws.js' %}"></script>
+</body>
+</html>

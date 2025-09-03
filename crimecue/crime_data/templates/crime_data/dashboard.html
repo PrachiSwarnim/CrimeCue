@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrimeCue Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>CrimeCue Dashboard</h1>
+
+    <h2>City Trends (Last 30 Days)</h2>
+    <canvas id="citychart" width="400" height="200"></canvas>
+
+    <h2>Source Stats</h2>
+    <canvas id="sourcechart" width="400" height="200"></canvas>
+
+    <h2>Recent Reports</h2>
+    <ul>
+        {% for report in recent_reports %}
+            <li>
+                <strong>{{ report.city }}</strong>: {{ report.title }}
+                (<a href="{{ report.url }}">link</a>)
+            </li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        const cityData = {
+            labels: {{ city_trends.keys|safe }},
+            datasets: [{
+                label: 'Reports',
+                data: {{ city_trends.values|safe }},
+                backgroundColor: 'rgba(255, 99, 132, 0.5)'
+            }]
+        };
+        new Chart(document.getElementById('cityChart'), { type: 'bar', data: cityData });
+
+        const sourceData = {
+            labels: {{ source_stats.keys|safe }},
+            datasets: [{
+                label: 'Reports',
+                data: {{ source_stats.values|safe }},
+                backgroundColor: 'rgba(54, 162, 235, 0.5)'
+            }]
+        };
+        new Chart(document.getElementById('sourceChart'), { type: 'bar', data: sourceData });
+    </script>
+</body>
+</html>
+</body>
+</html>
