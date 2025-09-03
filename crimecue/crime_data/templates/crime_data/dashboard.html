@@ -5,48 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CrimeCue Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Bootstrap for styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <h1>CrimeCue Dashboard</h1>
+<body class="bg-light text-dark">
 
-    <h2>City Trends (Last 30 Days)</h2>
-    <canvas id="citychart" width="400" height="200"></canvas>
+<div class="container py-4">
+    <h1 class="mb-4 text-center">🚨 CrimeCue Dashboard</h1>
 
-    <h2>Source Stats</h2>
-    <canvas id="sourcechart" width="400" height="200"></canvas>
+    <!-- Filter -->
+    <div class="d-flex justify-content-end mb-3">
+        <form method="get" action="">
+            <label for="days" class="me-2 fw-bold">Filter by:</label>
+            <select name="days" id="days" class="form-select d-inline w-auto" onchange="this.form.submit()">
+                <option value="7" {% if request.GET.days == '7' %}selected{% endif %}>Last 7 Days</option>
+                <option value="30" {% if request.GET.days == '30' or not request.GET.days %}selected{% endif %}>Last 30 Days</option>
+                <option value="90" {% if request.GET.days == '90' %}selected{% endif %}>Last 90 Days</option>
+            </select>
+        </form>
+    </div>
 
-    <h2>Recent Reports</h2>
-    <ul>
-        {% for report in recent_reports %}
-            <li>
-                <strong>{{ report.city }}</strong>: {{ report.title }}
-                (<a href="{{ report.url }}">link</a>)
-            </li>
-        {% endfor %}
-    </ul>
+    <!-- City Trends -->
+    <div class="mb-5">
+        <h2 class="h4">📍 City Trends</h2>
+        <canvas id="cityChart" height="200"></canvas>
+    </div>
 
-    <script>
-        const cityData = {
-            labels: {{ city_trends.keys|safe }},
-            datasets: [{
-                label: 'Reports',
-                data: {{ city_trends.values|safe }},
-                backgroundColor: 'rgba(255, 99, 132, 0.5)'
-            }]
-        };
-        new Chart(document.getElementById('cityChart'), { type: 'bar', data: cityData });
+    <!-- Source Stats -->
+    <div class="mb-5">
+        <h2 class="h4">📰 Source Stats</h2>
+        <canvas id="sourceChart" height="200"></canvas>
+    </div>
 
-        const sourceData = {
-            labels: {{ source_stats.keys|safe }},
-            datasets: [{
-                label: 'Reports',
-                data: {{ source_stats.values|safe }},
-                backgroundColor: 'rgba(54, 162, 235, 0.5)'
-            }]
-        };
-        new Chart(document.getElementById('sourceChart'), { type: 'bar', data: sourceData });
-    </script>
-</body>
-</html>
+    <!-- Recent Reports -->
+    <div>
+        <h2 class="h4">🆕 Recent Reports</h2>
+        <ul class="list-group">
+            {% for report in recent_reports %}
+                <li class="list-group-item">
+                    <strong>{{ report.ai_title }}</strong><br>
+                    <small class="text-muted">
+                        Source: {{ report.source }} | City: {{ report.city|default:"N/A" }} | Date: {{ report.published_at|date:"M d, Y H:i" }}
+                    </small>
+                    <br>
+                    <a href="{{ report.url }}" target="_blank" class="btn btn-sm btn-primary mt-1">Read more</a>
+                </li>
+            {% empty %}
+                <li class="list-group-item text-muted">No recent reports available.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<script>
+    // City Trends Chart
+    const cityData = {
+        labels: {{ city_trends.keys|safe }},
+        datasets: [{
+            label: 'Reports',
+            data: {{ city_trends.values|safe }},
+            backgroundColor: 'rgba(255, 99, 132, 0.5)'
+        }]
+    };
+    new Chart(document.getElementById('cityChart'), { type: 'bar', data: cityData });
+
+    // Source Stats Chart
+    const sourceData = {
+        labels: {{ source_stats.keys|safe }},
+        datasets: [{
+            label: 'Reports',
+            data: {{ source_stats.values|safe }},
+            backgroundColor: 'rgba(54, 162, 235, 0.5)'
+        }]
+    };
+    new Chart(document.getElementById('sourceChart'), { type: 'bar', data: sourceData });
+</script>
+
 </body>
 </html>

@@ -97,6 +97,19 @@ def report_exists(source, title):
         print(f"[DB Error] Failed to check report existence: {e}")
         return False
 
+def load_existing_reports():
+    """Load all existing (source, title) pairs into a set."""
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT source, title FROM crime_reports;")
+                rows = cur.fetchall()
+                return set((row["source"], row["title"]) for row in rows)
+    except Exception as e:
+        print(f"[DB Error] Failed to load existing reports: {e}")
+        return set()
+
+
 
 def log_pipeline_run(source, new_reports, status="success"):
     """Log a single run of the pipeline."""
