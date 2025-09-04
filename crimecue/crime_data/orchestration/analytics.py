@@ -6,7 +6,6 @@ import os
 # Configure Gemini once
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-
 def generate_ai_title(news_text: str) -> str:
     """
     Uses Gemini to generate a short, catchy title for a news item.

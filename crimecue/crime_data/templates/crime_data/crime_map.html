@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crime Map - CrimeCue</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+        .popup-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .popup-desc {
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+        // Initialize map
+        const map = L.map("map").setView([20.5937, 78.9629], 5); // Default to India
+
+        // Add base layer
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "© OpenStreetMap contributors"
+        }).addTo(map);
+
+        // Crime data passed from Django (your view should provide this)
+        const crimeReports = {{ crime_reports|safe }};
+
+        // Add markers
+        crimeReports.forEach(report => {
+            if (report.lat && report.lng) {
+                L.marker([report.lat, report.lng]).addTo(map)
+                    .bindPopup(`
+                        <div class="popup-title">${report.title}</div>
+                        <div class="popup-desc">${report.description || "No description"}</div>
+                        <div><b>City:</b> ${report.city}</div>
+                        <a href="${report.url}" target="_blank">Read more</a>
+                    `);
+            }
+        });
+    </script>
+</body>
+</html>
